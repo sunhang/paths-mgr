@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.16)
 project(path_mgr)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -29,3 +29,6 @@ install(
         TARGETS PathsMgr_run
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+install(PROGRAMS paths_mgr.sh
+        DESTINATION ${CMAKE_INSTALL_BINDIR})

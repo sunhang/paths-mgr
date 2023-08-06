@@ -2,4 +2,5 @@
 .vscode/
 cmake-build-debug/
 build/
-
+my-build/
+my-install/

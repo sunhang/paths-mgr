@@ -7,12 +7,14 @@
 #include "ArgumentsParser.h"
 #include "PathsMgr.h"
 #include "common.h"
+#include "base_tests.h"
 
 using namespace std;
 
+
 class PathsMgrTests : public ::testing::Test {
 protected:
-    PathsMgrTests() : mPathsMgr(ArgumentsParser(), 3) {}
+    PathsMgrTests() {}
 
     virtual void SetUp() {
     }
@@ -22,19 +24,45 @@ protected:
 
     static void SetUpTestCase() {
         cout << "PathsMgrTests SetUpTestCase" << endl;
-        const string str = filesystem::current_path().string() + "/paths-mgr";
-        cout << str << endl;
-        DiskDataIO::getInstance().setup(str);
+        mPathsMgr.init();
     }
 
     static void TearDownTestCase() {
         cout << "PathsMgrTests TearDownTestCase" << endl;
-        DiskDataIO::getInstance().clear();
+        mPathsMgr.clearData();
+        mPathsMgr.save();
+        mPathsMgr.getDiskDataIO().clear();
     }
 
 protected:
-    PathsMgr mPathsMgr;
+    // todo 命名规则是什么？
+    static PathsMgr mPathsMgr;
 };
+
+static PathsMgr createPathsMgr() {
+    const string str = filesystem::current_path().string() + "/paths-mgr";
+    cout << str << endl;
+    DiskDataIO diskDataIo;
+    diskDataIo.setup(str);
+    ArgumentsParser parser;
+    return PathsMgr(parser, diskDataIo, 3);
+}
+
+PathsMgr PathsMgrTests::mPathsMgr = createPathsMgr();
+
+TEST_F(PathsMgrTests, PathsMgr_root) {
+    mPathsMgr.clearData();
+
+    mPathsMgr.add("/");
+    list<string> paths = mPathsMgr.getPaths();
+    list<string>::iterator it = paths.begin();
+    EXPECT_EQ(0, paths.size());
+
+    list<string> fileNames = mPathsMgr.filterByDirName("");
+    EXPECT_EQ(0, fileNames.size());
+
+    mPathsMgr.clearData();
+}
 
 
 TEST_F(PathsMgrTests, PathsMgr_add) {
@@ -58,8 +86,7 @@ TEST_F(PathsMgrTests, PathsMgr_add) {
     EXPECT_EQ("/j/k/l", *(++it));
     EXPECT_EQ("/d/e/f", *(++it));
 
-    char *add[] = {"_", "a"};
-    mPathsMgr.getArgumentsParser().setup(2, add);
+    mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "a"));
     mPathsMgr.doWork();
     paths = mPathsMgr.getPaths();
     it = paths.begin();
@@ -70,34 +97,47 @@ TEST_F(PathsMgrTests, PathsMgr_add) {
 TEST_F(PathsMgrTests, PathsMgr_del) {
     list<string> origin = mPathsMgr.getPaths();
     EXPECT_EQ(3, origin.size());
-    char *delIndex4[] = {"_", "d", "4"};
-    mPathsMgr.getArgumentsParser().setup(3, delIndex4);
+    mPathsMgr.getArgumentsParser().setup(3, ARGUMENTS(PATHS_MGR_CMD, "d", "4"));
     mPathsMgr.doWork();
     list<string> deledList = mPathsMgr.getPaths();
     EXPECT_EQ(3, deledList.size());
     EXPECT_EQ(origin, deledList);
 
-    char *delIndex1[] = {"_", "d", "1"};
-    mPathsMgr.getArgumentsParser().setup(3, delIndex1);
+    mPathsMgr.getArgumentsParser().setup(3, ARGUMENTS(PATHS_MGR_CMD, "d", "1"));
     mPathsMgr.doWork();
     deledList = mPathsMgr.getPaths();
-    EXPECT_EQ(2, deledList.size());
     list<string>::iterator it = deledList.begin();
     const string str = filesystem::current_path().string();
     EXPECT_EQ(str, *it);
     EXPECT_EQ("/j/k/l", *(++it));
+    EXPECT_EQ(2, deledList.size());
 }
 
 TEST_F(PathsMgrTests, PathsMgr_cd) {
-    list<string> origin = mPathsMgr.getPaths();
-    char *argsCd3[] = {"_", "3"};
-    mPathsMgr.getArgumentsParser().setup(2, argsCd3);
+    mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "3"));
     string newDir;
     EXPECT_FALSE(mPathsMgr.cd(newDir));
-    char *argsCd1[] = {"_", "1"};
-    mPathsMgr.getArgumentsParser().setup(2, argsCd1);
+    mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "1"));
     EXPECT_TRUE(mPathsMgr.cd(newDir));
     EXPECT_EQ("/j/k/l", newDir);
+    list<string> origin = mPathsMgr.getPaths();
+    EXPECT_EQ(2, origin.size());
+
+    mPathsMgr.clearData();
+    mPathsMgr.add("/a/foo");
+    mPathsMgr.add("/a/b");
+    list<string> dirs;
+    dirs = mPathsMgr.cdByDirName("b");
+    list<string>::iterator it = dirs.begin();
+    EXPECT_EQ(1, dirs.size());
+    EXPECT_EQ("/a/b", *it);
+
+    mPathsMgr.add("/c/foo");
+    dirs = mPathsMgr.cdByDirName("foo");
+    it = dirs.begin();
+    EXPECT_EQ(2, dirs.size());
+    EXPECT_EQ("/c/foo", *it);
+    EXPECT_EQ("/a/foo", *(++it));
 }
 
 TEST_F(PathsMgrTests, PathsMgr_path_format) {
@@ -109,4 +149,26 @@ TEST_F(PathsMgrTests, PathsMgr_path_format) {
     path = "/e/f/g";
     formatted = mPathsMgr.format(2, path, homeDir);
     EXPECT_EQ("2: g\t/e/f/g", formatted);
+}
+
+TEST_F(PathsMgrTests, PathsMgr_path_others) {
+    mPathsMgr.clearData();
+
+    mPathsMgr.add("/a/b/never");
+    mPathsMgr.add("/d/e/now");
+    mPathsMgr.add("/g/h/tomorrow");
+
+    list<string> fileDirs = mPathsMgr.filterByDirName("n");
+    list<string>::iterator it = fileDirs.begin();
+    EXPECT_EQ("now", *(it));
+    EXPECT_EQ("never", *(++it));
+    EXPECT_EQ(2, fileDirs.size());
+
+    mPathsMgr.add("/h/h/tomorrow");
+    fileDirs = mPathsMgr.filterByDirName("tom");
+    it = fileDirs.begin();
+    ASSERT_EQ(1, fileDirs.size());
+    if (fileDirs.size() == 1) {
+        EXPECT_EQ("tomorrow", *it);
+    }
 }

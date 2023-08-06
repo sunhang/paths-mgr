@@ -23,7 +23,13 @@ public:
 
     bool isDel();
 
+    bool isNumber();
+
+    bool isPredict();
+
     bool isCd();
+
+    bool isRequestSubCommandsInfo();
 
     bool isArgumentsCorrect();
 

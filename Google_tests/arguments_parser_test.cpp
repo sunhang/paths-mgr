@@ -1,5 +1,6 @@
 #include "ArgumentsParser.h"
 #include "gtest/gtest.h"
+#include "base_tests.h"
 
 
 //
@@ -7,32 +8,46 @@
 //
 // todo 阅读：https://www.cnblogs.com/jiangling500/p/8367629.html
 TEST(ArgumentsParserTest, ArgumentsParser) {
-    char *ls[] = {"_", "ls"};
-    ArgumentsParser parser(2, ls);
+    ArgumentsParser parser(2, ARGUMENTS(PATHS_MGR_CMD, "ls"));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isLs());
 
-    char *ls0[] = {"_"};
-    parser.setup(1, ls0);
+    parser.setup(1, ARGUMENTS(PATHS_MGR_CMD));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isLs());
 
-    char *wrong0[] = {"_", "ls", "a"};
-    parser.setup(3, wrong0);
+    parser.setup(3, ARGUMENTS(PATHS_MGR_CMD, "ls", "a"));
     EXPECT_FALSE(parser.isArgumentsCorrect());
 
-    char *add[] = {"_", "a"};
-    parser.setup(2, add);
+    parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "a"));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isAdd());
 
-    char *del[] = {"_", "d", "2"};
-    parser.setup(3, del);
+    parser.setup(3, ARGUMENTS(PATHS_MGR_CMD, "d", "2"));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isDel());
 
-    char *cd[] = {"_", "2"};
-    parser.setup(2, cd);
+    parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "2"));
+    EXPECT_TRUE(parser.isArgumentsCorrect());
+    EXPECT_TRUE(parser.isNumber());
+
+    parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "predict"));
+    EXPECT_FALSE(parser.isArgumentsCorrect());
+    EXPECT_FALSE(parser.isPredict());
+
+    parser.setup(3, ARGUMENTS(PATHS_MGR_CMD, "predict", "n"));
+    EXPECT_TRUE(parser.isArgumentsCorrect());
+    EXPECT_TRUE(parser.isPredict());
+
+    parser.setup(3, ARGUMENTS(PATHS_MGR_CMD, "cd", "xxx"));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isCd());
+
+    parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "cd"));
+    EXPECT_FALSE(parser.isArgumentsCorrect());
+    EXPECT_FALSE(parser.isCd());
+
+    parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "subcommands"));
+    EXPECT_TRUE(parser.isArgumentsCorrect());
+    EXPECT_TRUE(parser.isRequestSubCommandsInfo());
 }

@@ -12,15 +12,13 @@ using namespace std;
 
 // todo 请阅读 https://www.learncpp.com/cpp-tutorial/basic-file-io/
 // todo 进程间互斥需要了解下
+// todo 目前非线程安全非进程安全
 class DiskDataIO {
 public:
-    /**
-     * todo 单例能移动到cpp里吗
-     */
-    static DiskDataIO &getInstance() {
-        static DiskDataIO inst;
-        return inst;
-    }
+    DiskDataIO() {};
+
+    // todo 析构函数的正确写法是什么
+    ~DiskDataIO() {};
 
     void setup(const string strWorkDir);
 
@@ -35,18 +33,9 @@ public:
     void clear();
 
 private:
-    // todo 以下有没有遗漏
-    DiskDataIO() {};
-
-    ~DiskDataIO() {};
-
     string getDataPath();
 
     string getLogPath();
-
-    DiskDataIO(const DiskDataIO &);
-
-    DiskDataIO &operator=(const DiskDataIO &);
 
 private:
     string mStrWorkDir;

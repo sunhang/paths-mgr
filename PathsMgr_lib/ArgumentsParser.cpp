@@ -4,6 +4,7 @@
 
 #include "ArgumentsParser.h"
 #include "common.h"
+#include <iostream>
 
 ArgumentsParser::ArgumentsParser() {}
 
@@ -19,10 +20,9 @@ void ArgumentsParser::setup(int argc, char **argv) {
 }
 
 bool ArgumentsParser::isArgumentsCorrect() {
-    if (isLs() || isAdd() || isDel() || isCd()) {
-        return true;
-    }
-    return false;
+    return isLs() || isAdd() || isDel()
+           || isNumber() || isPredict() || isCd()
+           || isRequestSubCommandsInfo();
 }
 
 bool ArgumentsParser::isLs() {
@@ -37,8 +37,20 @@ bool ArgumentsParser::isDel() {
     return mArgv.size() == 3 && mArgv[1] == "d" && is_number(mArgv[2]);
 }
 
-bool ArgumentsParser::isCd() {
+bool ArgumentsParser::isNumber() {
     return mArgv.size() == 2 && is_number(mArgv[1]);
+}
+
+bool ArgumentsParser::isPredict() {
+    return mArgv.size() == 3 && mArgv[1] == "predict";
+}
+
+bool ArgumentsParser::isCd() {
+    return mArgv.size() == 3 && mArgv[1] == "cd";
+}
+
+bool ArgumentsParser::isRequestSubCommandsInfo() {
+    return mArgv.size() == 2 && mArgv[1] == "subcommands";
 }
 
 const vector<string> &ArgumentsParser::getArgv() const {

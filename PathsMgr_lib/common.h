@@ -7,6 +7,7 @@
 
 #include <string>
 #include <algorithm>
+#include <list>
 
 using namespace std;
 
@@ -15,5 +16,9 @@ bool is_number(const string &s);
 string get_workDir();
 
 string get_home_dir();
+
+string url_encode(const string &str);
+
+string join(list<string> &strings, string delim);
 
 #endif //PATH_MGR_COMMON_H

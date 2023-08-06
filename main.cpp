@@ -9,9 +9,15 @@
 // todo https://liam.page/2018/11/05/apply-C-style-string-in-switch-case-clause/
 // todo 项目文件结构得弄一弄
 int main(int argc, char **argv) {
-    DiskDataIO::getInstance().setup(get_workDir());
+    DiskDataIO dataIo;
+    dataIo.setup(get_workDir());
+
     ArgumentsParser parser(argc, argv);
-    PathsMgr pathsMgr(parser);
+    PathsMgr pathsMgr(parser, dataIo);
+    pathsMgr.init();
+
     bool workResult = pathsMgr.doWork();
+    pathsMgr.save();
+
     return workResult ? EXIT_SUCCESS : EXIT_FAILURE;
 }
