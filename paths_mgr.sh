@@ -2,6 +2,8 @@
 
 binary="PathsMgr_run"
 
+# binary="./cmake-build-debug/PathsMgr_run"
+
 function urlDecode() {
 	: "${*//+/ }"
 	echo -e "${_//%/\\x}"
@@ -21,13 +23,15 @@ function selectMenu() {
 }
 
 function changeDir() {
+    # 获取程序的输出内容
 	strFromBinary=$($binary $1)
 	if [ $? -ne 0 ]; then
 		echo "切换路径出现错误，请检查参数是否正确"
 	else
-		local array=(${strFromBinary//\\n/})
-		local size=${#array[@]}
-		local path=${array[size - 1]}
+	    # 从strFromBinary解析目录path
+		strFromBinary=${strFromBinary##*;}
+		path=$(urlDecode $strFromBinary)
+
 		echo "切换路径到："$path
 		cd $path
 	fi

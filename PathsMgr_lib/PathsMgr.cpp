@@ -121,9 +121,12 @@ void PathsMgr::del() {
 bool PathsMgr::cd() {
     string newDir;
     bool result = cd(newDir);
-    // todo 使用url encode
     // 约定最后一行是输出的路径，以便让shell解析它
-    cout << newDir << endl;
+    if (result) {
+        string str{";"};
+        str += url_encode(newDir);
+        cout << str << endl;
+    }
     return result;
 }
 

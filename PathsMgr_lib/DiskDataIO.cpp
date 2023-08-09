@@ -37,9 +37,8 @@ void DiskDataIO::setup(const string strWorkDir) {
         try {
             error_code ec;
             auto createDirResult = filesystem::create_directories(strWorkDir, ec);
-            stringstream ss;
-            ss << "create_dir_result:" << createDirResult << " error_code:" << ec;
-            writeToLog(ss.str());
+            string str = "create_dir_result:" + to_string(createDirResult) + " error_code:" + ec.message();
+            writeToLog(str);
         } catch (exception &e) {
             cerr << e.what() << endl;
             writeToLog(e.what());
@@ -62,14 +61,6 @@ list<string> DiskDataIO::loadFromDisk() {
     while (getline(inf, line)) {
         paths.push_back(line);
     }
-
-// todo 这种写法有网上建议，不明白是什么意思
-//   list<string> paths;
-//   while (inf) {
-//     string strInput;
-//     inf >> strInput;
-//     paths.push_back(strInput);
-//   }
 
     return paths;
 }
