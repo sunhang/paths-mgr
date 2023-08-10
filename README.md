@@ -15,9 +15,9 @@ cmake --build . # 然后build项目
 sudo cmake --install . # 然后安装到/usr/local/bin/
 ```
 
-```
-## 第2步 部署
+# 第2步 部署
 打开终端配置文件`cd && vim .bashrc`
+
 在该文件尾部添加
 ```shell
 source /usr/local/bin/paths_mgr.sh
