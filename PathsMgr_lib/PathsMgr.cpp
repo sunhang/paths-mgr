@@ -103,49 +103,6 @@ list<string> PathsMgr::filterByDirName(string namePrefix) {
     return result;
 }
 
-void PathsMgr::del() {
-    list<string> &paths = mPaths;
-    int index = stoi(mArgumentsParser.getArgv()[2]);
-    if (index < 0 || index >= paths.size()) {
-        cout << "下标越界" << endl;
-    } else {
-        list<string>::iterator it = paths.begin();
-        advance(it, index);
-        const string path = *it;
-        paths.erase(it);
-        cout << "删除成功：" << path << endl;
-    }
-}
-
-// todo 改一下名字
-bool PathsMgr::cd() {
-    string newDir;
-    bool result = cd(newDir);
-    // 约定最后一行是输出的路径，以便让shell解析它
-    if (result) {
-        string str{";"};
-        str += url_encode(newDir);
-        cout << str << endl;
-    }
-    return result;
-}
-
-// todo 改一下名字
-bool PathsMgr::cd(string &newDir) {
-    list<string>& paths = mPaths;
-    int index = stoi(mArgumentsParser.getArgv()[1]);
-    if (index < 0 || index >= paths.size()) {
-        cout << "下标越界" << endl;
-        return false;
-    } else {
-        list<string>::iterator it = paths.begin();
-        advance(it, index);
-        newDir = *it;
-
-        return true;
-    }
-}
-
 bool PathsMgr::outCdByDirName() {
     string dirName = mArgumentsParser.getArgv()[2];
 
@@ -162,7 +119,6 @@ bool PathsMgr::outCdByDirName() {
 }
 
 // todo 应该不是文件名字而是目录名字，检查整个工程有没有相同的命名错误
-// todo 和上边的filterByDirName看看能不能重构下
 list<string> PathsMgr::cdByDirName(string dirName) {
     list<string> &paths = mPaths;
     list<string> result;
@@ -175,6 +131,47 @@ list<string> PathsMgr::cdByDirName(string dirName) {
         }
     }
     return result;
+}
+
+void PathsMgr::del() {
+    list<string> &paths = mPaths;
+    int index = stoi(mArgumentsParser.getArgv()[2]);
+    if (index < 0 || index >= paths.size()) {
+        cout << "下标越界" << endl;
+    } else {
+        list<string>::iterator it = paths.begin();
+        advance(it, index);
+        const string path = *it;
+        paths.erase(it);
+        cout << "删除成功：" << path << endl;
+    }
+}
+
+bool PathsMgr::cdByNumber() {
+    string newDir;
+    bool result = cdByNumber(newDir);
+    // 约定最后一行是输出的路径，以便让shell解析它
+    if (result) {
+        string str{";"};
+        str += url_encode(newDir);
+        cout << str << endl;
+    }
+    return result;
+}
+
+bool PathsMgr::cdByNumber(string &newDir) {
+    list<string>& paths = mPaths;
+    int index = stoi(mArgumentsParser.getArgv()[1]);
+    if (index < 0 || index >= paths.size()) {
+        cout << "下标越界" << endl;
+        return false;
+    } else {
+        list<string>::iterator it = paths.begin();
+        advance(it, index);
+        newDir = *it;
+
+        return true;
+    }
 }
 
 void PathsMgr::outSubCommandsInfo() {
@@ -210,7 +207,7 @@ bool PathsMgr::doWork() {
     } else if (mArgumentsParser.isDel()) {
         del();
     } else if (mArgumentsParser.isNumber()) {
-        result = cd();
+        result = cdByNumber();
     } else if (mArgumentsParser.isPredict()) {
         outFilteredDirNames();
     } else if (mArgumentsParser.isCd()) {

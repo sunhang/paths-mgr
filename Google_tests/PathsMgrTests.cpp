@@ -116,9 +116,9 @@ TEST_F(PathsMgrTests, PathsMgr_del) {
 TEST_F(PathsMgrTests, PathsMgr_cd) {
     mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "3"));
     string newDir;
-    EXPECT_FALSE(mPathsMgr.cd(newDir));
+    EXPECT_FALSE(mPathsMgr.cdByNumber(newDir));
     mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "1"));
-    EXPECT_TRUE(mPathsMgr.cd(newDir));
+    EXPECT_TRUE(mPathsMgr.cdByNumber(newDir));
     EXPECT_EQ("/j/k/l", newDir);
     list<string> origin = mPathsMgr.getPaths();
     EXPECT_EQ(2, origin.size());

@@ -79,7 +79,7 @@ void DiskDataIO::writeToLog(string log) {
     tm tm;
     time_t now = time(0);
     localtime_r(&now, &tm);
-    char tmp[32] = {NULL};
+    char tmp[32] = {0};
     strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", &tm);
 
     ofstream out{getLogPath(), ios::app};

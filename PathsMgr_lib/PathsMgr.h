@@ -43,7 +43,9 @@ private:
 
     void del();
 
-    bool cd();
+    bool cdByNumber();
+
+    bool cdByNumber(string &newDir);
 
     void outFilteredDirNames();
 
@@ -54,8 +56,6 @@ private:
     void add(string strCwd);
 
     list<string> getPaths();
-
-    bool cd(string &newDir);
 
     bool outCdByDirName();
 

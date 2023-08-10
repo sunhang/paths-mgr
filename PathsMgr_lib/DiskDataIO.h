@@ -10,9 +10,9 @@
 
 using namespace std;
 
-// todo 请阅读 https://www.learncpp.com/cpp-tutorial/basic-file-io/
-// todo 进程间互斥需要了解下
-// todo 目前非线程安全非进程安全
+/**
+ * 此处的磁盘读写不耗时，同时不太可能发生多进程竞争文件资源。此处目前不实现互斥机制。
+ */
 class DiskDataIO {
 public:
     DiskDataIO() {};
