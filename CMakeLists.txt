@@ -30,5 +30,6 @@ install(
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(PROGRAMS paths_mgr.sh
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(PROGRAMS prj_paths_mgr.sh
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        RENAME paths_mgr.sh)
