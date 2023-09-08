@@ -50,4 +50,8 @@ TEST(ArgumentsParserTest, ArgumentsParser) {
     parser.setup(2, ARGUMENTS(PATHS_MGR_CMD, "subcommands"));
     EXPECT_TRUE(parser.isArgumentsCorrect());
     EXPECT_TRUE(parser.isRequestSubCommandsInfo());
+
+    parser.setup(3, ARGUMENTS(PATHS_MGR_CMD, "r", "/a/b/c"));
+    EXPECT_TRUE(parser.isArgumentsCorrect());
+    EXPECT_TRUE(parser.isRefreshFrequency());
 }

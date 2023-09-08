@@ -8,12 +8,17 @@ function url_decode() {
 	echo -e "${_//%/\\x}"
 }
 
+function entry_to() {
+    $PATHS_MGR_BIN "r" $1
+    cd $1
+}
+
 function select_menu() {
 	echo "遇到相同的名字，请选择一个路径："
 	select item; do
 		if [ 1 -le "$REPLY" ] && [ "$REPLY" -le $# ]; then
 			echo "切换路径到：""$item"
-			cd $item
+			entry_to $item
 			break
 		else
 			echo "请输入数字 1-$#"
@@ -33,7 +38,7 @@ function change_dir() {
 		path=$(url_decode $str_from_binary)
 
 		echo "切换路径到："$path
-		cd $path
+		entry_to $path
 	fi
 }
 
@@ -54,7 +59,7 @@ function change_dir_by_cd() {
 
 		if [ ${#array[@]} -eq 1 ]; then
 			echo "切换路径到："${array[0]}
-			cd ${array[0]}
+			entry_to ${array[0]}
 		else
 			select_menu ${array[@]}
 		fi

@@ -8,13 +8,13 @@ set(HEADER_FILES
         PathsMgr.h
         ArgumentsParser.h
         common.h
-        )
+        Path.h)
 
 set(SOURCE_FILES
         DiskDataIO.cpp
         PathsMgr.cpp
         ArgumentsParser.cpp
-        common.cpp)
+        common.cpp Path.cpp)
 
 # build目录下在第一次执行cmake .. 时，由于CMakeCache.txt还未生成，gtest_SOURCE_DIR的值是空
 # include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

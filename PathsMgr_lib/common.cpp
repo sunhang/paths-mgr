@@ -6,7 +6,6 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <filesystem>
-#include <list>
 #include <numeric>
 
 bool is_number(const string &s) {
@@ -59,4 +58,18 @@ string join(list<string> &strings, string delim) {
                       [&delim](string &x, string &y) {
                           return x.empty() ? y : x + delim + y;
                       });
+}
+
+vector<string> custom_split(string s, string del) {
+    vector<string> result;
+    // Use find function to find 1st position of delimiter.
+    int end = s.find(del);
+    while (end != -1) { // Loop until no delimiter is left in the string.
+        result.push_back(s.substr(0, end));
+        s.erase(s.begin(), s.begin() + end + 1);
+        end = s.find(del);
+    }
+    result.push_back(s.substr(0, end));
+
+    return result;
 }

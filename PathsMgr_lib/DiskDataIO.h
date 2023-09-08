@@ -7,9 +7,13 @@
 
 #include <list>
 #include <string>
+#include <vector>
+#include "common.h"
+#include "Path.h"
 
 using namespace std;
 
+// todo 如果没有类，文件的命名是否小写？
 /**
  * 此处的磁盘读写不耗时，同时不太可能发生多进程竞争文件资源。此处目前不实现互斥机制。
  */
@@ -22,9 +26,9 @@ public:
 
     void setup(const string strWorkDir);
 
-    list <string> loadFromDisk();
+    list <Path> loadFromDisk();
 
-    void saveToDisk(list <string> paths);
+    void saveToDisk(list <Path> paths);
 
     void writeToLog(string log);
 

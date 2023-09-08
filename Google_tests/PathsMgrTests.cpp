@@ -54,8 +54,7 @@ TEST_F(PathsMgrTests, PathsMgr_root) {
     mPathsMgr.clearData();
 
     mPathsMgr.add("/");
-    list<string> paths = mPathsMgr.getPaths();
-    list<string>::iterator it = paths.begin();
+    list<Path> paths = mPathsMgr.getPaths();
     EXPECT_EQ(0, paths.size());
 
     list<string> fileNames = mPathsMgr.filterByDirName("");
@@ -64,6 +63,30 @@ TEST_F(PathsMgrTests, PathsMgr_root) {
     mPathsMgr.clearData();
 }
 
+TEST_F(PathsMgrTests, PathsMgr_Frequency) {
+    mPathsMgr.add("foo");
+    mPathsMgr.add("bar");
+    mPathsMgr.add("baz");
+    mPathsMgr.getArgumentsParser().setup(3, ARGUMENTS(PATHS_MGR_CMD, "r", "foo"));
+    mPathsMgr.doWork();
+    mPathsMgr.add("zhang");
+    list<Path> paths = mPathsMgr.getPaths();
+    EXPECT_EQ(3, paths.size());
+    list<Path>::iterator it = paths.begin();
+    EXPECT_PATH_STR_EQ("zhang", *it);
+    EXPECT_PATH_STR_EQ("baz", *(++it));
+    EXPECT_PATH_STR_EQ("foo", *(++it));
+
+    mPathsMgr.add("wang");
+    paths = mPathsMgr.getPaths();
+    EXPECT_EQ(3, paths.size());
+    it = paths.begin();
+    EXPECT_PATH_STR_EQ("wang", *it);
+    EXPECT_PATH_STR_EQ("zhang", *(++it));
+    EXPECT_PATH_STR_EQ("foo", *(++it));
+
+    mPathsMgr.clearData();
+}
 
 TEST_F(PathsMgrTests, PathsMgr_add) {
     mPathsMgr.add("/a/b/c");
@@ -71,45 +94,45 @@ TEST_F(PathsMgrTests, PathsMgr_add) {
     mPathsMgr.add("/g/h/i");
     mPathsMgr.add("/j/k/l");
 
-    list<string> paths = mPathsMgr.getPaths();
+    list<Path> paths = mPathsMgr.getPaths();
     EXPECT_EQ(3, paths.size());
-    list<string>::iterator it = paths.begin();
-    EXPECT_EQ("/j/k/l", *it);
-    EXPECT_EQ("/g/h/i", *(++it));
-    EXPECT_EQ("/d/e/f", *(++it));
+    list<Path>::iterator it = paths.begin();
+    EXPECT_PATH_STR_EQ("/j/k/l", *it);
+    EXPECT_PATH_STR_EQ("/g/h/i", *(++it));
+    EXPECT_PATH_STR_EQ("/d/e/f", *(++it));
 
     mPathsMgr.add("/g/h/i");
     paths = mPathsMgr.getPaths();
     it = paths.begin();
     EXPECT_EQ(3, paths.size());
-    EXPECT_EQ("/g/h/i", *it);
-    EXPECT_EQ("/j/k/l", *(++it));
-    EXPECT_EQ("/d/e/f", *(++it));
+    EXPECT_PATH_STR_EQ("/g/h/i", *it);
+    EXPECT_PATH_STR_EQ("/j/k/l", *(++it));
+    EXPECT_PATH_STR_EQ("/d/e/f", *(++it));
 
     mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "a"));
     mPathsMgr.doWork();
     paths = mPathsMgr.getPaths();
     it = paths.begin();
     const string str = filesystem::current_path().string();
-    EXPECT_EQ(str, *it);
+    EXPECT_PATH_STR_EQ(str, *it);
 }
 
 TEST_F(PathsMgrTests, PathsMgr_del) {
-    list<string> origin = mPathsMgr.getPaths();
+    list<Path> origin = mPathsMgr.getPaths();
     EXPECT_EQ(3, origin.size());
     mPathsMgr.getArgumentsParser().setup(3, ARGUMENTS(PATHS_MGR_CMD, "d", "4"));
     mPathsMgr.doWork();
-    list<string> deledList = mPathsMgr.getPaths();
+    list<Path> deledList = mPathsMgr.getPaths();
     EXPECT_EQ(3, deledList.size());
     EXPECT_EQ(origin, deledList);
 
     mPathsMgr.getArgumentsParser().setup(3, ARGUMENTS(PATHS_MGR_CMD, "d", "1"));
     mPathsMgr.doWork();
     deledList = mPathsMgr.getPaths();
-    list<string>::iterator it = deledList.begin();
+    list<Path>::iterator it = deledList.begin();
     const string str = filesystem::current_path().string();
-    EXPECT_EQ(str, *it);
-    EXPECT_EQ("/j/k/l", *(++it));
+    EXPECT_PATH_STR_EQ(str, *it);
+    EXPECT_PATH_STR_EQ("/j/k/l", *(++it));
     EXPECT_EQ(2, deledList.size());
 }
 
@@ -120,7 +143,7 @@ TEST_F(PathsMgrTests, PathsMgr_cd) {
     mPathsMgr.getArgumentsParser().setup(2, ARGUMENTS(PATHS_MGR_CMD, "1"));
     EXPECT_TRUE(mPathsMgr.cdByNumber(newDir));
     EXPECT_EQ("/j/k/l", newDir);
-    list<string> origin = mPathsMgr.getPaths();
+    list<Path> origin = mPathsMgr.getPaths();
     EXPECT_EQ(2, origin.size());
 
     mPathsMgr.clearData();
@@ -144,11 +167,11 @@ TEST_F(PathsMgrTests, PathsMgr_path_format) {
     string homeDir = get_home_dir();
     string path = homeDir + filesystem::path::preferred_separator + "a/b/c";
     string formatted = mPathsMgr.format(1, path, homeDir);
-    EXPECT_EQ("1: c\t~/a/b/c", formatted);
+    EXPECT_EQ("1) c\t~/a/b/c", formatted);
 
     path = "/e/f/g";
     formatted = mPathsMgr.format(2, path, homeDir);
-    EXPECT_EQ("2: g\t/e/f/g", formatted);
+    EXPECT_EQ("2) g\t/e/f/g", formatted);
 }
 
 TEST_F(PathsMgrTests, PathsMgr_path_others) {

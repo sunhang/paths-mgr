@@ -33,6 +33,8 @@ public:
 
     bool isArgumentsCorrect();
 
+    bool isRefreshFrequency();
+
     const vector<string> &getArgv() const;
 
 private:

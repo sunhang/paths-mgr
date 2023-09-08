@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
+#include <vector>
 
 using namespace std;
 
@@ -20,5 +21,7 @@ string get_home_dir();
 string url_encode(const string &str);
 
 string join(list<string> &strings, string delim);
+
+vector<string> custom_split(string s, string del);
 
 #endif //PATH_MGR_COMMON_H

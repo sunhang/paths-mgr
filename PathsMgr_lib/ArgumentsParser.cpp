@@ -4,7 +4,6 @@
 
 #include "ArgumentsParser.h"
 #include "common.h"
-#include <iostream>
 
 ArgumentsParser::ArgumentsParser() {}
 
@@ -22,7 +21,7 @@ void ArgumentsParser::setup(int argc, char **argv) {
 bool ArgumentsParser::isArgumentsCorrect() {
     return isLs() || isAdd() || isDel()
            || isNumber() || isPredict() || isCd()
-           || isRequestSubCommandsInfo();
+           || isRequestSubCommandsInfo() || isRefreshFrequency();
 }
 
 bool ArgumentsParser::isLs() {
@@ -47,6 +46,11 @@ bool ArgumentsParser::isPredict() {
 
 bool ArgumentsParser::isCd() {
     return mArgv.size() == 3 && mArgv[1] == "cd";
+}
+
+// todo 除了shell，如何防止外界调用。目的是只让shell调用
+bool ArgumentsParser::isRefreshFrequency() {
+    return mArgv.size() == 3 && mArgv[1] == "r";
 }
 
 bool ArgumentsParser::isRequestSubCommandsInfo() {

@@ -10,6 +10,7 @@
 #include "ArgumentsParser.h"
 #include "gtest/gtest_prod.h"
 #include "DiskDataIO.h"
+#include "Path.h"
 #include <iostream>
 
 // todo 思考什么时候用引用什么时候用指针
@@ -55,13 +56,15 @@ private:
 
     void add(string strCwd);
 
-    list<string> getPaths();
+    list<Path> &getPaths();
 
     bool outCdByDirName();
 
     list<string> cdByDirName(string dirName);
 
     void outSubCommandsInfo();
+
+    void refreshFrequency();
 
     FRIEND_TEST(PathsMgrTests, PathsMgr_root);
 
@@ -75,8 +78,10 @@ private:
 
     FRIEND_TEST(PathsMgrTests, PathsMgr_path_others);
 
+    FRIEND_TEST(PathsMgrTests, PathsMgr_Frequency);
+
 private:
-    list<string> mPaths;
+    list<Path> mPaths;
     ArgumentsParser mArgumentsParser;
     DiskDataIO mDiskDataIo;
     const int mMax;

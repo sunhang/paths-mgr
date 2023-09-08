@@ -47,8 +47,7 @@ void DiskDataIO::setup(const string strWorkDir) {
     this->mStrWorkDir = strWorkDir;
 }
 
-// todo 如果没有类，文件的命名是否小写？
-list<string> DiskDataIO::loadFromDisk() {
+list<Path> DiskDataIO::loadFromDisk() {
     ifstream inf{getDataPath(), ifstream::in};
 
     if (!inf) {
@@ -56,21 +55,27 @@ list<string> DiskDataIO::loadFromDisk() {
         return {};
     }
 
-    list<string> paths;
+    list<Path> paths;
     string line;
     while (getline(inf, line)) {
-        paths.push_back(line);
+        vector<string> subStrs = custom_split(line, "\t");
+        if (subStrs.size() == 1) {
+            Path p(line);
+            paths.push_back(p);
+        } else if (subStrs.size() == 2) {
+            Path p(stoi(subStrs[0]), subStrs[1]);
+            paths.push_back(p);
+        }
     }
 
     return paths;
 }
 
-void DiskDataIO::saveToDisk(list<string> paths) {
+void DiskDataIO::saveToDisk(list<Path> paths) {
     ofstream out{getDataPath()};
-    list<string>::iterator it;
+    list<Path>::iterator it;
     for (it = paths.begin(); it != paths.end(); it++) {
-        string str = *it;
-        out << str << endl;
+        out << it->getFrequency() << "\t" << it->getStr() << endl;
     }
     out.close();
 }

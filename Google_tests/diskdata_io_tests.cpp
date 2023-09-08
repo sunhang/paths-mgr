@@ -6,6 +6,7 @@
 #include <fstream>
 #include "gtest/gtest.h"
 #include "DiskDataIO.h"
+#include "base_tests.h"
 
 using namespace std;
 
@@ -37,16 +38,16 @@ TEST(DiskDataIOTest, DiskDataIO) {
     const string str = filesystem::current_path().string() + "/paths-mgr-test";
     diskDataIO.setup(str);
 
-    list<string> to;
-    to.push_front("b");
-    to.push_front("a");
+    list<Path> to;
+    to.push_front(Path("b"));
+    to.push_front(Path("a"));
     diskDataIO.saveToDisk(to);
 
-    list<string> from = diskDataIO.loadFromDisk();
-    list<string>::iterator it = from.begin();
+    list<Path> from = diskDataIO.loadFromDisk();
+    list<Path>::iterator it = from.begin();
     EXPECT_EQ(2, from.size());
-    EXPECT_EQ("a", *it);
-    EXPECT_EQ("b", *(++it));
+    EXPECT_PATH_STR_EQ("a", *it);
+    EXPECT_PATH_STR_EQ("b", *(++it));
 
     diskDataIO.clear();
 }

@@ -19,4 +19,19 @@ TEST(CommonTests, Common) {
     strs = {"foo", "bar", "baz"};
     string result = join(strs, ":");
     EXPECT_EQ("foo:bar:baz", result);
+
+
+    string str = "foo\tbar\tbaz";
+    vector<string> subStrs = custom_split(str, "\t");
+    EXPECT_EQ(3, subStrs.size());
+    EXPECT_EQ("foo", subStrs.at(0));
+    EXPECT_EQ("bar", subStrs.at(1));
+    EXPECT_EQ("baz", subStrs.at(2));
+
+    str = "foo bar baz";
+    subStrs = custom_split(str, " ");
+    EXPECT_EQ(3, subStrs.size());
+    EXPECT_EQ("foo", subStrs.at(0));
+    EXPECT_EQ("bar", subStrs.at(1));
+    EXPECT_EQ("baz", subStrs.at(2));
 }

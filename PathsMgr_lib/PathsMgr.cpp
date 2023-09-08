@@ -21,6 +21,19 @@ DiskDataIO &PathsMgr::getDiskDataIO() {
     return mDiskDataIo;
 }
 
+void PathsMgr::refreshFrequency() {
+    string target = mArgumentsParser.getArgv()[2];
+
+    auto &paths = getPaths();
+    for (auto &item: paths) {
+        if (item.getStr() == target) {
+            item.increaseFrequency();
+        } else {
+            item.decreaseFrequency();
+        }
+    }
+}
+
 void PathsMgr::add() {
     char *cwd = get_current_dir_name();
     add(string(cwd));
@@ -35,27 +48,35 @@ void PathsMgr::add(string strCwd) {
 
     cout << "添加到列表 :" << strCwd << endl;
 
-    list<string> &paths = mPaths;
-    list<string>::iterator it = find(paths.begin(), paths.end(), strCwd);
+    list<Path> &paths = mPaths;
+    list<Path>::iterator it = find_if(paths.begin(), paths.end(), [strCwd](const Path &p) {
+        return p.getStr() == strCwd;
+    });
+
     if (it == paths.end()) {
-        paths.push_front(strCwd);
-        if (paths.size() > mMax) {
-            paths.erase(--paths.end());
+        if (paths.size() >= mMax) {
+            list<Path>::iterator it = min_element(paths.begin(), paths.end(), [](const auto &a, const auto &b) {
+                return a.getFrequency() <= b.getFrequency();
+            });
+            paths.erase(it);
         }
+        paths.push_front(Path(strCwd));
     } else {
-        string str = *it;
+        Path p = *it;
         paths.erase(it);
-        paths.push_front(str);
+        paths.push_front(p);
     }
 }
 
 void PathsMgr::ls() {
-    list<string> paths = getPaths();
+    list<Path> paths = getPaths();
 
     string homeDir = get_home_dir();
     // print
     for (int i{0}; auto item: paths) {
-        cout << format(i, item, homeDir) << endl;
+        string strPath = item.getStr();
+        cout << format(i, strPath, homeDir)
+             << ":" << item.getFrequency() << endl;
         ++i;
     }
 }
@@ -69,13 +90,12 @@ string PathsMgr::format(int number, string &path, string &homeDir) {
     if (strPath.find(homeDir, 0) == 0) {
         strPath = "~" + strPath.substr(homeDir.size());
     }
-    return to_string(number) + ": " + simpleName + "\t" + strPath;
+    return to_string(number) + ") " + simpleName + "\t" + strPath;
 }
 
-list<string> PathsMgr::getPaths() {
+list<Path> &PathsMgr::getPaths() {
     return mPaths;
 }
-
 
 void PathsMgr::outFilteredDirNames() {
     string namePrefix = mArgumentsParser.getArgv()[2];
@@ -88,11 +108,11 @@ void PathsMgr::outFilteredDirNames() {
 }
 
 list<string> PathsMgr::filterByDirName(string namePrefix) {
-    list<string> &paths = mPaths;
+    list<Path> &paths = mPaths;
     set<string> pathsSet;
     list<string> result;
     for (auto item: paths) {
-        filesystem::path p(item);
+        filesystem::path p(item.getStr());
         string simpleName = p.stem().c_str();
 
         if (simpleName.find(namePrefix, 0) == 0 && pathsSet.find(simpleName) == pathsSet.end()) {
@@ -120,28 +140,28 @@ bool PathsMgr::outCdByDirName() {
 
 // todo 应该不是文件名字而是目录名字，检查整个工程有没有相同的命名错误
 list<string> PathsMgr::cdByDirName(string dirName) {
-    list<string> &paths = mPaths;
+    list<Path> &paths = mPaths;
     list<string> result;
     for (auto item: paths) {
-        filesystem::path p(item);
+        filesystem::path p(item.getStr());
         string simpleName = p.stem().c_str();
 
         if (simpleName.find(dirName, 0) == 0) {
-            result.push_back(item);
+            result.push_back(item.getStr());
         }
     }
     return result;
 }
 
 void PathsMgr::del() {
-    list<string> &paths = mPaths;
+    list<Path> &paths = mPaths;
     int index = stoi(mArgumentsParser.getArgv()[2]);
     if (index < 0 || index >= paths.size()) {
         cout << "下标越界" << endl;
     } else {
-        list<string>::iterator it = paths.begin();
+        list<Path>::iterator it = paths.begin();
         advance(it, index);
-        const string path = *it;
+        const string path = it->getStr();
         paths.erase(it);
         cout << "删除成功：" << path << endl;
     }
@@ -160,15 +180,15 @@ bool PathsMgr::cdByNumber() {
 }
 
 bool PathsMgr::cdByNumber(string &newDir) {
-    list<string>& paths = mPaths;
+    list<Path> &paths = mPaths;
     int index = stoi(mArgumentsParser.getArgv()[1]);
     if (index < 0 || index >= paths.size()) {
         cout << "下标越界" << endl;
         return false;
     } else {
-        list<string>::iterator it = paths.begin();
+        list<Path>::iterator it = paths.begin();
         advance(it, index);
-        newDir = *it;
+        newDir = it->getStr();
 
         return true;
     }
@@ -214,6 +234,8 @@ bool PathsMgr::doWork() {
         result = outCdByDirName();
     } else if (mArgumentsParser.isRequestSubCommandsInfo()) {
         outSubCommandsInfo();
+    } else if (mArgumentsParser.isRefreshFrequency()) {
+        refreshFrequency();
     }
 
     return result;
