@@ -20,7 +20,7 @@ public:
         this->mPath = path;
     }
 
-    Path(int frequency, string path) {
+    Path(float frequency, string path) {
         this->mFrequency = frequency;
         this->mPath = path;
     }
@@ -36,19 +36,19 @@ public:
         this->mPath = pi.mPath;
     }
 
-    int getFrequency() const;
+    float getFrequency() const;
 
     string getStr() const;
 
-    void increaseFrequency();
+    void liftFrequency();
 
-    void decreaseFrequency();
+    void reduceFrequency();
 
     // todo 需要研究下重载equal
     bool operator==(const Path &rhs) const;
 
 private:
-    int mFrequency;
+    float mFrequency;
     string mPath;
 };
 

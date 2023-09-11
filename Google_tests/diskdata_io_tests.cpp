@@ -39,7 +39,7 @@ TEST(DiskDataIOTest, DiskDataIO) {
     diskDataIO.setup(str);
 
     list<Path> to;
-    to.push_front(Path("b"));
+    to.push_front(Path(1.1f, "b"));
     to.push_front(Path("a"));
     diskDataIO.saveToDisk(to);
 

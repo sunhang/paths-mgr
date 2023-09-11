@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <set>
+#include <cmath>
+#include <cfloat>
 
 using namespace std;
 
@@ -27,9 +29,9 @@ void PathsMgr::refreshFrequency() {
     auto &paths = getPaths();
     for (auto &item: paths) {
         if (item.getStr() == target) {
-            item.increaseFrequency();
+            item.liftFrequency();
         } else {
-            item.decreaseFrequency();
+            item.reduceFrequency();
         }
     }
 }
@@ -56,7 +58,8 @@ void PathsMgr::add(string strCwd) {
     if (it == paths.end()) {
         if (paths.size() >= mMax) {
             list<Path>::iterator it = min_element(paths.begin(), paths.end(), [](const auto &a, const auto &b) {
-                return a.getFrequency() <= b.getFrequency();
+                return a.getFrequency() < b.getFrequency()
+                       || fabs(a.getFrequency() - b.getFrequency()) < FLT_EPSILON;
             });
             paths.erase(it);
         }

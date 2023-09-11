@@ -63,7 +63,7 @@ list<Path> DiskDataIO::loadFromDisk() {
             Path p(line);
             paths.push_back(p);
         } else if (subStrs.size() == 2) {
-            Path p(stoi(subStrs[0]), subStrs[1]);
+            Path p(stof(subStrs[0]), subStrs[1]);
             paths.push_back(p);
         }
     }

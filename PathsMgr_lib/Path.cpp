@@ -3,8 +3,10 @@
 //
 
 #include "Path.h"
+#include <cfloat>
+#include <cmath>
 
-int Path::getFrequency() const {
+float Path::getFrequency() const {
     return mFrequency;
 }
 
@@ -12,14 +14,14 @@ string Path::getStr() const {
     return mPath;
 }
 
-void Path::increaseFrequency() {
-    mFrequency++;
+void Path::liftFrequency() {
+    mFrequency += 1.0f;
 }
 
-void Path::decreaseFrequency() {
-    mFrequency--;
+void Path::reduceFrequency() {
+    mFrequency -= 0.1f;
 }
 
 bool Path::operator==(const Path &p) const {
-    return (*this).mFrequency == p.mFrequency && (*this).mPath == p.mPath;
+    return fabs((*this).mFrequency - p.mFrequency) < FLT_EPSILON && (*this).mPath == p.mPath;
 }
