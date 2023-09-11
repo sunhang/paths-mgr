@@ -19,7 +19,7 @@ class PathsMgr {
 
 public:
     // todo 这块有可优化的空间吗？能不调用那么多构造函数吗？
-    PathsMgr(const ArgumentsParser &parser, const DiskDataIO &diskDataIo, int max = 10)
+    PathsMgr(const ArgumentsParser &parser, const DiskDataIO &diskDataIo, int max = 16)
             : mArgumentsParser(parser),
               mDiskDataIo(diskDataIo),
               mMax(max) {
