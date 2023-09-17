@@ -172,6 +172,10 @@ TEST_F(PathsMgrTests, PathsMgr_path_format) {
     path = "/e/f/g";
     formatted = mPathsMgr.format(2, path, homeDir);
     EXPECT_EQ("2) g\t/e/f/g", formatted);
+
+    path = homeDir + filesystem::path::preferred_separator + "Documents/linux-debug/source/Linux-0.11code";
+    formatted = mPathsMgr.format(3, path, homeDir);
+    EXPECT_EQ("3) Linux-0.11code\t~/Documents/linux-debug/source/Linux-0.11code", formatted);
 }
 
 TEST_F(PathsMgrTests, PathsMgr_path_others) {

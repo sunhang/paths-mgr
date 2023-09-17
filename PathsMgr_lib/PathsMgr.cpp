@@ -86,7 +86,7 @@ void PathsMgr::ls() {
 
 string PathsMgr::format(int number, string &path, string &homeDir) {
     filesystem::path p(path);
-    string simpleName = p.stem().c_str();
+    string simpleName = p.filename().c_str();
 
     // replace homedir with '~'
     string strPath = path;
