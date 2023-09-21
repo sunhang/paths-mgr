@@ -166,16 +166,16 @@ TEST_F(PathsMgrTests, PathsMgr_cd) {
 TEST_F(PathsMgrTests, PathsMgr_path_format) {
     string homeDir = get_home_dir();
     string path = homeDir + filesystem::path::preferred_separator + "a/b/c";
-    string formatted = mPathsMgr.format(1, path, homeDir);
-    EXPECT_EQ("1) c\t~/a/b/c", formatted);
+    string formatted = mPathsMgr.format(1, path, homeDir, 1.2f, 32);
+    EXPECT_EQ("1) c  ~/a/b/c:1.2", formatted);
 
     path = "/e/f/g";
-    formatted = mPathsMgr.format(2, path, homeDir);
-    EXPECT_EQ("2) g\t/e/f/g", formatted);
+    formatted = mPathsMgr.format(2, path, homeDir, 24, 32);
+    EXPECT_EQ("2) g  /e/f/g:24", formatted);
 
     path = homeDir + filesystem::path::preferred_separator + "Documents/linux-debug/source/Linux-0.11code";
-    formatted = mPathsMgr.format(3, path, homeDir);
-    EXPECT_EQ("3) Linux-0.11code\t~/Documents/linux-debug/source/Linux-0.11code", formatted);
+    formatted = mPathsMgr.format(3, path, homeDir, 2.4f, 30);
+    EXPECT_EQ("3) Linux-0.11code  ~/Docume...", formatted);
 }
 
 TEST_F(PathsMgrTests, PathsMgr_path_others) {

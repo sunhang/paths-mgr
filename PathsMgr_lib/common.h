@@ -24,4 +24,6 @@ string join(list<string> &strings, string delim);
 
 vector<string> custom_split(string s, string del);
 
+int query_terminal_columns();
+
 #endif //PATH_MGR_COMMON_H

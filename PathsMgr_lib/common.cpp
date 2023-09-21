@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <filesystem>
 #include <numeric>
+#include <sys/ioctl.h>
 
 bool is_number(const string &s) {
     return !s.empty()
@@ -72,4 +73,10 @@ vector<string> custom_split(string s, string del) {
     result.push_back(s.substr(0, end));
 
     return result;
+}
+
+int query_terminal_columns() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_col;
 }

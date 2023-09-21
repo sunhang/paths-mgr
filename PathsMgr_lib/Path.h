@@ -9,7 +9,8 @@
 
 using namespace std;
 
-#define DEFAULT_FREQUENCY 2
+// todo 这个可以做成动态配置项
+#define DEFAULT_FREQUENCY 16
 
 // todo C++中struct的使用方式需要了解一下
 class Path {

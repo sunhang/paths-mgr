@@ -56,7 +56,7 @@ void PathsMgr::add(string strCwd) {
     });
 
     if (it == paths.end()) {
-        if (paths.size() >= mMax) {
+        while (paths.size() >= mMax) {
             list<Path>::iterator it = min_element(paths.begin(), paths.end(), [](const auto &a, const auto &b) {
                 return a.getFrequency() < b.getFrequency()
                        || fabs(a.getFrequency() - b.getFrequency()) < FLT_EPSILON;
@@ -75,16 +75,17 @@ void PathsMgr::ls() {
     list<Path> paths = getPaths();
 
     string homeDir = get_home_dir();
+    int columns = query_terminal_columns();
     // print
     for (int i{0}; auto item: paths) {
         string strPath = item.getStr();
-        cout << format(i, strPath, homeDir)
-             << ":" << item.getFrequency() << endl;
+        string outstr = format(i, strPath, homeDir, item.getFrequency(), columns);
+        cout << outstr << endl;
         ++i;
     }
 }
 
-string PathsMgr::format(int number, string &path, string &homeDir) {
+string PathsMgr::format(int number, string &path, string &homeDir, float freq, int columns) {
     filesystem::path p(path);
     string simpleName = p.filename().c_str();
 
@@ -93,7 +94,16 @@ string PathsMgr::format(int number, string &path, string &homeDir) {
     if (strPath.find(homeDir, 0) == 0) {
         strPath = "~" + strPath.substr(homeDir.size());
     }
-    return to_string(number) + ") " + simpleName + "\t" + strPath;
+
+    ostringstream oss;
+    oss << to_string(number) << ") " << simpleName << "  " << strPath << ":" << freq;
+
+    string str = oss.str();
+
+    if (str.size() > columns && columns > 3) {
+        str = str.erase(columns - 3) + "...";
+    }
+    return str;
 }
 
 list<Path> &PathsMgr::getPaths() {
