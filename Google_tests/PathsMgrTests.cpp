@@ -148,12 +148,12 @@ TEST_F(PathsMgrTests, PathsMgr_cd) {
 
     mPathsMgr.clearData();
     mPathsMgr.add("/a/foo");
-    mPathsMgr.add("/a/b");
+    mPathsMgr.add("/a/f");
     list<string> dirs;
-    dirs = mPathsMgr.cdByDirName("b");
+    dirs = mPathsMgr.cdByDirName("f");
     list<string>::iterator it = dirs.begin();
     EXPECT_EQ(1, dirs.size());
-    EXPECT_EQ("/a/b", *it);
+    EXPECT_EQ("/a/f", *it);
 
     mPathsMgr.add("/c/foo");
     dirs = mPathsMgr.cdByDirName("foo");

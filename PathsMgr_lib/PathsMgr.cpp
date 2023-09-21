@@ -126,7 +126,7 @@ list<string> PathsMgr::filterByDirName(string namePrefix) {
     list<string> result;
     for (auto item: paths) {
         filesystem::path p(item.getStr());
-        string simpleName = p.stem().c_str();
+        string simpleName = p.filename().c_str();
 
         if (simpleName.find(namePrefix, 0) == 0 && pathsSet.find(simpleName) == pathsSet.end()) {
             result.push_back(simpleName);
@@ -157,9 +157,9 @@ list<string> PathsMgr::cdByDirName(string dirName) {
     list<string> result;
     for (auto item: paths) {
         filesystem::path p(item.getStr());
-        string simpleName = p.stem().c_str();
+        string simpleName = p.filename().c_str();
 
-        if (simpleName.find(dirName, 0) == 0) {
+        if (simpleName.compare(dirName) == 0) {
             result.push_back(item.getStr());
         }
     }
