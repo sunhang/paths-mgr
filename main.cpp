@@ -4,8 +4,6 @@
 #include "ArgumentsParser.h"
 #include "PathsMgr.h"
 
-// todo 研究一下switch case
-// todo https://liam.page/2018/11/05/apply-C-style-string-in-switch-case-clause/
 int main(int argc, char **argv) {
     DiskDataIO dataIo;
     dataIo.setup(get_workDir());

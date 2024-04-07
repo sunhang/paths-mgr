@@ -13,7 +13,6 @@
 
 using namespace std;
 
-// todo 如果没有类，文件的命名是否小写？
 /**
  * 此处的磁盘读写不耗时，同时不太可能发生多进程竞争文件资源。此处目前不实现互斥机制。
  */
@@ -21,7 +20,6 @@ class DiskDataIO {
 public:
     DiskDataIO() {};
 
-    // todo 析构函数的正确写法是什么
     ~DiskDataIO() {};
 
     void setup(const string strWorkDir);

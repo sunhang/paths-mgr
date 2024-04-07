@@ -48,7 +48,6 @@ bool ArgumentsParser::isCd() {
     return mArgv.size() == 3 && mArgv[1] == "cd";
 }
 
-// todo 除了shell，如何防止外界调用。目的是只让shell调用
 bool ArgumentsParser::isRefreshFrequency() {
     return mArgv.size() == 3 && mArgv[1] == "r";
 }

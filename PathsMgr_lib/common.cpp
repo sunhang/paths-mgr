@@ -23,8 +23,6 @@ string get_home_dir() {
 }
 
 string get_workDir() {
-    // todo string format实现
-    // todo file path 拼接的高级方法
     string strWorkDir = get_home_dir() + filesystem::path::preferred_separator + ".local/share/paths-mgr";
     return strWorkDir;
 }

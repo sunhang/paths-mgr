@@ -6,20 +6,16 @@
 #define PATH_MGR_PATHINFO_H
 
 #include <string>
+#include <utility>
 
 using namespace std;
 
 // todo 这个可以做成动态配置项
 #define DEFAULT_FREQUENCY 16
 
-// todo C++中struct的使用方式需要了解一下
 class Path {
 public:
-    Path(string path) {
-        // todo 如何调用 Path(DEFAULT_FREQUENCY, string path)
-        this->mFrequency = DEFAULT_FREQUENCY;
-        this->mPath = path;
-    }
+    explicit Path(string path) : Path(DEFAULT_FREQUENCY, std::move(path)) {}
 
     Path(float frequency, string path) {
         this->mFrequency = frequency;
@@ -45,7 +41,6 @@ public:
 
     void reduceFrequency();
 
-    // todo 需要研究下重载equal
     bool operator==(const Path &rhs) const;
 
 private:
